@@ -4,6 +4,7 @@ from flask import json
 from datetime import datetime
 from urllib.request import urlopen
 import sqlite3
+import requests
                                                                                                                                        
 app = Flask(__name__)                                                                                                                  
                                                                                                                                        
@@ -48,30 +49,38 @@ def histogramme():
     return render_template("histogramme.html", data=temperatures)
 
 
+
+app = Flask(__name__)
+
+
+@app.route('/extract-minutes/<date_string>')
+def extract_minutes(date_string):
+    date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
+    minutes = date_object.minute
+    return jsonify({'minutes': minutes})
+
+
 @app.route('/commits/')
 def commits():
     url = "https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits"
 
-    # Appel API GitHub avec un User-Agent obligatoire
+    # Appel API GitHub avec User-Agent obligatoire
     response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
 
-    # Vérification du code retour
     if response.status_code != 200:
         return f"Erreur API GitHub : {response.status_code}", 500
 
     commits = response.json()
-
     minutes_count = {}
 
     for c in commits:
         try:
-            # Sécurisation : certains commits peuvent ne pas avoir "author"
             if "commit" not in c or "author" not in c["commit"]:
                 continue
 
             date_string = c["commit"]["author"]["date"]
 
-            # Supprimer les millisecondes si présentes
+            # Supprimer millisecondes si elles existent
             date_string = date_string.split(".")[0] + "Z"
 
             date_obj = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%SZ")
