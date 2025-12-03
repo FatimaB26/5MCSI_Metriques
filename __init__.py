@@ -32,6 +32,22 @@ def mongraphique():
 def contact():
     return render_template('contact.html') #co
 
+@app.route("/histogramme/")
+def histogramme():
+    temperatures = [
+        ["Jour", "Température"],
+        ["Lundi", 12],
+        ["Mardi", 15],
+        ["Mercredi", 14],
+        ["Jeudi", 18],
+        ["Vendredi", 17],
+        ["Samedi", 20],
+        ["Dimanche", 19]
+    ]
+
+    return render_template("histogramme.html", data=temperatures)
+
+
 @app.route('/commits/')
 def commits():
     # Récupération brute de tous les commits
@@ -43,7 +59,7 @@ def commits():
     minutes_count = {}
 
     for commit in data:
-        date_string = commit["commit"]["author"]["date"]  # ex : "2024-02-11T11:57:27Z"
+        date_string = commit["commit"]["author"]["date"] 
         date_obj = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%SZ")
         minute = date_obj.minute
 
