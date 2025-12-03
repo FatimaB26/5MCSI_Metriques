@@ -50,28 +50,44 @@ def histogramme():
 
 @app.route('/commits/')
 def commits():
-    # Récupération brute de tous les commits
     url = "https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits"
-    response = requests.get(url)
-    data = response.json()
 
-    # Dictionnaire minute → nombre de commits
+    # Appel API GitHub avec un User-Agent obligatoire
+    response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+
+    # Vérification du code retour
+    if response.status_code != 200:
+        return f"Erreur API GitHub : {response.status_code}", 500
+
+    commits = response.json()
+
     minutes_count = {}
 
-    for commit in data:
-        date_string = commit["commit"]["author"]["date"] 
-        date_obj = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%SZ")
-        minute = date_obj.minute
+    for c in commits:
+        try:
+            # Sécurisation : certains commits peuvent ne pas avoir "author"
+            if "commit" not in c or "author" not in c["commit"]:
+                continue
 
-        if minute not in minutes_count:
-            minutes_count[minute] = 0
-        minutes_count[minute] += 1
+            date_string = c["commit"]["author"]["date"]
 
-    # On transmet les minutes et les valeurs au template
+            # Supprimer les millisecondes si présentes
+            date_string = date_string.split(".")[0] + "Z"
+
+            date_obj = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%SZ")
+            minute = date_obj.minute
+
+            minutes_count[minute] = minutes_count.get(minute, 0) + 1
+
+        except Exception as e:
+            print("Erreur commit :", e)
+            continue
+
     labels = list(minutes_count.keys())
     values = list(minutes_count.values())
 
     return render_template("commits.html", labels=labels, values=values)
+
   
 if __name__ == "__main__":
   app.run(debug=True)
