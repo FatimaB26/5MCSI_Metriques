@@ -2,9 +2,10 @@ from flask import Flask, render_template_string, render_template, jsonify
 from flask import render_template
 from flask import json
 from datetime import datetime
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 import sqlite3
-import requests
+
+
                                                                                                                                        
 app = Flask(__name__)                                                                                                                  
                                                                                                                                        
@@ -49,28 +50,19 @@ def histogramme():
     return render_template("histogramme.html", data=temperatures)
 
 
-
-app = Flask(__name__)
-
-
-@app.route('/extract-minutes/<date_string>')
-def extract_minutes(date_string):
-    date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
-    minutes = date_object.minute
-    return jsonify({'minutes': minutes})
-
-
 @app.route('/commits/')
 def commits():
+
     url = "https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits"
+    req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
 
-    # Appel API GitHub avec User-Agent obligatoire
-    response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+    try:
+        raw = urlopen(req).read()
+    except Exception as e:
+        return "Erreur API GitHub : " + str(e), 500
 
-    if response.status_code != 200:
-        return f"Erreur API GitHub : {response.status_code}", 500
+    commits = json.loads(raw.decode("utf-8"))
 
-    commits = response.json()
     minutes_count = {}
 
     for c in commits:
@@ -79,17 +71,12 @@ def commits():
                 continue
 
             date_string = c["commit"]["author"]["date"]
-
-            # Supprimer millisecondes si elles existent
             date_string = date_string.split(".")[0] + "Z"
-
             date_obj = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%SZ")
             minute = date_obj.minute
 
             minutes_count[minute] = minutes_count.get(minute, 0) + 1
-
-        except Exception as e:
-            print("Erreur commit :", e)
+        except:
             continue
 
     labels = list(minutes_count.keys())
@@ -97,6 +84,6 @@ def commits():
 
     return render_template("commits.html", labels=labels, values=values)
 
-  
+
 if __name__ == "__main__":
   app.run(debug=True)
