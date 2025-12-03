@@ -1,58 +1,32 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Commits par minute</title>
-
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f0f2f5;
-            text-align: center;
-            padding: 40px;
-        }
-
-        .container {
-            width: 70%;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-    </style>
 </head>
-
 <body>
 
-    <div class="container">
-        <h2>📊 Nombre de commits par minute</h2>
-        <canvas id="chart"></canvas>
-    </div>
+<h2>Nombre de commits par minute</h2>
 
-    <script>
-        const ctx = document.getElementById('chart');
+<canvas id="commitsChart" width="600" height="300"></canvas>
 
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: {{ labels|tojson }},
-                datasets: [{
-                    label: 'Commits',
-                    data: {{ values|tojson }},
-                    backgroundColor: 'rgba(54, 162, 235, 0.7)'
-                }]
-            },
-            options: {
-                scales: {
-                    y: { beginAtZero: true }
-                }
-            }
-        });
-    </script>
+<script>
+    const labels = {{ labels|tojson }};
+    const values = {{ values|tojson }};
+
+    const ctx = document.getElementById('commitsChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Commits par minute',
+                data: values
+            }]
+        }
+    });
+</script>
 
 </body>
 </html>
