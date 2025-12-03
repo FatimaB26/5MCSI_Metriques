@@ -24,6 +24,10 @@ def meteo():
         results.append({'Jour': dt_value, 'temp': temp_day_value})
     return jsonify(results=results)
 
+@app.route("/rapport/")
+def mongraphique():
+    return render_template("graphique.html")
+
 @app.route("/contact/")
 def MaPremiereAPI():
     return "<h2>Ma page de contact</h2>"
