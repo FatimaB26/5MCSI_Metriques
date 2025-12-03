@@ -28,7 +28,7 @@ def meteo():
 def mongraphique():
     return render_template("graphique.html")
 
-@app.route('/')
+@app.route('/contact/')
 def contact():
     return render_template('contact.html') #co
   
