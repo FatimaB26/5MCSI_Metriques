@@ -29,4 +29,79 @@
         }
 
         h2 {
-            margin-
+            margin-top: 0;
+            text-align: center;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: inline-block;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            font-size: 15px;
+        }
+
+        input {
+            height: 45px;
+        }
+
+        textarea {
+            resize: none;
+            height: 110px;
+        }
+
+        .btn {
+            width: 100%;
+            background: #ffffff;
+            color: #2575fc;
+            padding: 12px 20px;
+            border: none;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: #e7e7e7;
+            transform: translateY(-2px);
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>📩 Contactez-moi</h2>
+
+        <form>
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" placeholder="Votre nom">
+
+            <label for="prenom">Prénom</label>
+            <input type="text" id="prenom" placeholder="Votre prénom">
+
+            <label for="message">Message</label>
+            <textarea id="message" placeholder="Écrivez votre message ici..."></textarea>
+
+            <button class="btn" type="submit">Envoyer</button>
+        </form>
+    </div>
+</body>
+</html>
