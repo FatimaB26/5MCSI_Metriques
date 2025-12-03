@@ -28,9 +28,9 @@ def meteo():
 def mongraphique():
     return render_template("graphique.html")
 
-@app.route("/contact/")
-def MaPremiereAPI():
-    return "<h2>Ma page de contact</h2>"
+@app.route('/')
+def contact():
+    return render_template('contact.html') #co
   
 if __name__ == "__main__":
   app.run(debug=True)
